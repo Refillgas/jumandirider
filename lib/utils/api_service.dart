@@ -22,7 +22,6 @@ class ApiService {
   static Future<Map<String, String>> _getHeaders() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    
     return {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
@@ -154,7 +153,12 @@ class ApiService {
       headers: await _getHeaders(),
     );
     
-    return jsonDecode(response.body);
+    final responseData = jsonDecode(response.body);
+    final balance = double.tryParse(responseData['balance'].toString()) ?? 0.0;
+    return {
+      'balance': balance,
+      ...responseData,
+    };
   }
   
   // Withdraw Funds
